@@ -78,6 +78,8 @@ def generateData(textPath):
                 name = name.split(".")[0]
                 #name = re.sub("[A-Za-z0-9]+", "", name).replace("  ", " ")
                 name = re.sub(r"^[-=:~_ ]+", "", name)
+                name = re.sub(r"Page\w+|ms\w+", " ", name)
+                name = re.sub(r" +", " ", name)
                 if len(name) > lenName:
                     name = name[:lenName] + "..."
 
