@@ -1,7 +1,7 @@
 import re
 
-textPath = "/Users/romanovienna/_OpenITI/0925AH/data/0902Sakhawi/0902Sakhawi.DawLamic/0902Sakhawi.DawLamic.JK003608-ara1.mARkdownSimple"
-uriBase  = "0902Sakhawi.DawLamic.JK003608-ara1"
+textPath = "../data/0902Sakhawi.DawLamic.ITO20230111-ara1.EIS1600"
+uriBase  = "0902Sakhawi.DawLamic.ITO20230111-ara1.EIS1600"
 reference = "<i>al-Ḍawʾ al-Lāmiʾ lī-Ahl al-Qarn al-Tāsiʿ</i>"
 
 
@@ -51,8 +51,8 @@ def generateData(textPath):
     prosop = []
 
     with open(textPath, "r") as f1:
-        data = f1.read()
-        data = re.split(r"###\$(\d+)\$#", data)
+        data = f1.read().replace("_ء_", "")
+        data = re.split(r"\n#=(\d+)= ", data)
 
         realData = data[1:] # odd - ids; even - text
         print(len(realData))
@@ -60,6 +60,10 @@ def generateData(textPath):
         for i in range(0, len(realData), 2):
             ID = realData[i]
             text = realData[i+1]
+            text = re.sub(r"\n=\d+.*\n", "\n\n", text)
+            text = re.sub(r"BIO_\w+", "", text)
+
+
             if "$" in text:
                 textFormatted = processText(text)
 
@@ -72,13 +76,18 @@ def generateData(textPath):
 
                 name = text.replace("$", "").replace("\n", " ").replace("  ", " ").strip()
                 name = name.split(".")[0]
-                name = re.sub("[A-Za-z0-9]+", "", name).replace("  ", " ")
+                #name = re.sub("[A-Za-z0-9]+", "", name).replace("  ", " ")
+                name = re.sub(r"^[-=:~_ ]+", "", name)
                 if len(name) > lenName:
                     name = name[:lenName] + "..."
 
+                name = f"[{ID}] {name}"
                 #input(name)
 
                 prosop.append("%s\t%s" % (ID, name))
+
+                # ADD HERE CODE TO REPLACE EMPTY IMAGES WITH ACTUAL GRAPHS
+                # final = final.replace("MAINHTMLTEXT", textFormatted)
 
                 with open(bioPath+ID+".html", "w") as f9:
                     f9.write(final)
