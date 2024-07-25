@@ -1,4 +1,21 @@
-import re
+import re, os
+
+def get_files_as_dict(folder_path):
+    files_dict = {}
+    # List all entries in the folder_path
+    for entry in os.listdir(folder_path):
+        full_path = os.path.join(folder_path, entry)
+        # Check if the entry is a file
+        if os.path.isfile(full_path):
+            # Get the filename without extension
+            filename_without_extension = os.path.splitext(entry)[0]
+            # Store in dictionary
+            files_dict[filename_without_extension] = full_path
+    return files_dict
+
+graphs = get_files_as_dict("../data/individual_networks/")
+
+print(graphs)
 
 textPath = "../data/0902Sakhawi.DawLamic.ITO20230111-ara1.EIS1600"
 uriBase  = "0902Sakhawi.DawLamic.ITO20230111-ara1.EIS1600"
@@ -47,6 +64,7 @@ def processText(text):
     return(text)
 
 
+
 def generateData(textPath):
     prosop = []
 
@@ -89,7 +107,8 @@ def generateData(textPath):
                 prosop.append("%s\t%s" % (ID, name))
 
                 # ADD HERE CODE TO REPLACE EMPTY IMAGES WITH ACTUAL GRAPHS
-                # final = final.replace("MAINHTMLTEXT", textFormatted)
+                if ID in graphs:
+                    final = final.replace("not_enough_data_geoNetwork", ID)
 
                 with open(bioPath+ID+".html", "w") as f9:
                     f9.write(final)
